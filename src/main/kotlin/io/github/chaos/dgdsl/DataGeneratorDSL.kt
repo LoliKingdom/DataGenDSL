@@ -12,7 +12,7 @@ import thedarkcolour.kotlinforforge.forge.MOD_BUS
 object DataGeneratorDSL {
     const val MODID = "data_gen_dsl"
 
-    internal const val DEBUG_MODE = true
+    private const val DEBUG_MODE = true
 
     private val LOGGER = LogManager.getLogger()
 
@@ -26,6 +26,9 @@ object DataGeneratorDSL {
     }
 
     private fun onGatherData(event: GatherDataEvent) {
+        if (!DEBUG_MODE)
+            return
+
         val generator = event.generator
 
         if (event.includeServer()) {

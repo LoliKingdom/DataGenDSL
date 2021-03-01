@@ -1,25 +1,28 @@
 package io.github.chaos.dgdsl.examples
 
-import io.github.chaos.dgdsl.DataGeneratorDSL
-import io.github.chaos.dgdsl.recipe
+import io.github.chaos.dgdsl.*
 import net.minecraft.block.Blocks
 import net.minecraft.data.DataGenerator
 import net.minecraft.data.IFinishedRecipe
 import net.minecraft.data.RecipeProvider
-import net.minecraft.data.ShapedRecipeBuilder
 import net.minecraft.item.Items
 import java.util.function.Consumer
 
 class Recipes(generatorIn: DataGenerator) : RecipeProvider(generatorIn) {
     override fun registerRecipes(consumer: Consumer<IFinishedRecipe>) {
-        ShapedRecipeBuilder.shapedRecipe(Blocks.DIAMOND_BLOCK, 64)
-            .patternLine("XXX")
-            .patternLine("XXX")
-            .patternLine("XXX")
-            .key('X', Blocks.DIRT)
-            .setGroup("")
-            .addCriterion("has_dirt", hasItem(Blocks.DIRT))
-            .build(consumer)
+        conditionalRecipe {
+            condition {
+                and {
+                    True with
+                    False with
+                    ItemExists("minecraft", "bone_meal") with
+                    or {
+                        ModLoaded("eki_lib") with
+                        False
+                    }
+                }
+            }
+        }
 
         recipe(Blocks.GRASS_BLOCK) {
             pattern {
@@ -30,13 +33,15 @@ class Recipes(generatorIn: DataGenerator) : RecipeProvider(generatorIn) {
                 """
             }
 
-            itemKey {
-                Pair('x', Items.BONE)
-                Pair('y', Blocks.BONE_BLOCK.asItem())
+            key {
+                'x' to Items.BONE
+                'y' to Items.BONE_BLOCK
             }
 
-            group {
-                DataGeneratorDSL.MODID
+            group("")
+
+            criterion {
+                "has_dirt" to hasItem(Blocks.DIRT)
             }
         }.build(consumer)
     }
