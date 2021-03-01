@@ -1,0 +1,14 @@
+modLoader="kotlinforforge"
+loaderVersion="[1.6,)"
+license='MIT'
+
+[[mods]]
+modId="data_gen_dsl"
+version="${file.jarVersion}"
+displayName="Data Generator DSL"
+logoFile=""
+credits=""
+authors="ChAoS-UnItY"
+description='''
+    A new generation economy mod with multiple modern features!
+'''
