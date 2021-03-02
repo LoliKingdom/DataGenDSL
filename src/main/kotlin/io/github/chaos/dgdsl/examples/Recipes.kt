@@ -1,48 +1,121 @@
 package io.github.chaos.dgdsl.examples
 
 import io.github.chaos.dgdsl.*
+import io.github.chaos.dgdsl.builder.AdvancementBuilder
+import net.minecraft.advancements.FrameType
 import net.minecraft.block.Blocks
 import net.minecraft.data.DataGenerator
 import net.minecraft.data.IFinishedRecipe
 import net.minecraft.data.RecipeProvider
 import net.minecraft.item.Items
+import net.minecraft.util.ResourceLocation
+import net.minecraft.util.text.StringTextComponent
 import java.util.function.Consumer
 
 class Recipes(generatorIn: DataGenerator) : RecipeProvider(generatorIn) {
     override fun registerRecipes(consumer: Consumer<IFinishedRecipe>) {
+        val ID = ResourceLocation("data_gen_dsl_test", "conditional")
+
         conditionalRecipe {
             condition {
                 and {
-                    True with
-                    False with
-                    ItemExists("minecraft", "bone_meal") with
-                    or {
-                        ModLoaded("eki_lib") with
-                        False
+                    not(modLoaded("minecraft")) +
+                            itemExists {
+                                "minecraft" to "dirt"
+                            } +
+                            False
+                }
+            }
+
+            recipe {
+                recipe(Blocks.DIAMOND_BLOCK, 64) {
+                    pattern {
+                        """
+                            xxx
+                            xxx
+                            xxx
+                        """.trimIndent()
+                    }
+
+                    key {
+                        'x' to Blocks.DIRT
+                    }
+
+                    group("")
+
+                    criterion {
+                        "has_dirt" to hasItem(Blocks.DIRT)
+                    }
+                }.build(this)
+            }
+
+            advancement(ID) {
+                condition {
+                    and {
+                        not(modLoaded("minecraft")) +
+                                itemExists {
+                                    "minecraft" to "dirt"
+                                } +
+                                False
+                    }
+                }
+
+                advancement {
+                    parentID {
+                        "minecraft" to "root"
+                    }
+
+                    display {
+                        AdvancementBuilder.DisplayInfo(
+                            Blocks.DIAMOND_BLOCK,
+                            StringTextComponent("Dirt2Diamonds"),
+                            StringTextComponent("The BEST crafting recipe in the game!"),
+                            null,
+                            FrameType.TASK,
+                            false,
+                            false,
+                            false
+                        )
                     }
                 }
             }
-        }
+        }.build(consumer, ID)
 
-        recipe(Blocks.GRASS_BLOCK) {
-            pattern {
-                """
-                    xxx
-                    xyx
-                    xxx
-                """
+        conditionalRecipe {
+            condition {
+                and {
+                    not(modLoaded("minecraft")) +
+                            itemExists {
+                                "minecraft" to "dirt"
+                            } +
+                            False
+                }
             }
 
-            key {
-                'x' to Items.BONE
-                'y' to Items.BONE_BLOCK
-            }
+            recipe {
+                recipe(Blocks.DIAMOND_BLOCK, 64) {
+                    pattern {
+                        """
+                            xxx
+                            xxx
+                            xxx
+                        """.trimIndent()
+                    }
 
-            group("")
+                    key {
+                        'x' to Blocks.DIRT
+                    }
 
-            criterion {
-                "has_dirt" to hasItem(Blocks.DIRT)
+                    group("")
+
+                    criterion {
+                        "has_dirt" to hasItem(Blocks.DIRT)
+                    }
+                }.build(this)
             }
-        }.build(consumer)
+        }.genAdvancement()
+            .build(consumer) {
+                "data_gen_dsl_test" to "conditional2"
+            }
     }
 }
