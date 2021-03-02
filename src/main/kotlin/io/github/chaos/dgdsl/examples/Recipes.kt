@@ -113,9 +113,8 @@ class Recipes(generatorIn: DataGenerator) : RecipeProvider(generatorIn) {
                     }
                 }.build(this)
             }
-        }.genAdvancement()
-            .build(consumer) {
-                "data_gen_dsl_test" to "conditional2"
-            }
+        }.genAdvancement().build(consumer) {
+            "data_gen_dsl_test" to "conditional2"
+        }
     }
 }

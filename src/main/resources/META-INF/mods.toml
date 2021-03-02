@@ -6,9 +6,9 @@ license='MIT'
 modId="data_gen_dsl"
 version="${file.jarVersion}"
 displayName="Data Generator DSL"
-logoFile=""
+logoFile="dgdsl.png"
 credits=""
 authors="ChAoS-UnItY"
 description='''
-    A new generation economy mod with multiple modern features!
+    Developer-friendly domain specific language for data generator purpose.
 '''
