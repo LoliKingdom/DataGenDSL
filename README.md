@@ -78,6 +78,10 @@ condition {
         False
     }
 }
+// or
+condition {
+    False
+}
 // ...
 ```
 ### ConditionalAdvancement

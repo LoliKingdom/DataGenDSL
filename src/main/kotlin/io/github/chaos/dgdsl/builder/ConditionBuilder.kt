@@ -7,22 +7,22 @@ class ConditionBuilder {
     val True = TrueCondition.INSTANCE
     val False = FalseCondition.INSTANCE
 
-    fun not(not: ICondition): NotCondition =
+    fun not(not: ICondition): ICondition =
         NotCondition(not)
 
-    fun not(not: () -> ICondition): NotCondition =
+    fun not(not: () -> ICondition): ICondition =
         not(not.invoke())
 
-    fun and(and: And.() -> List<ICondition>): AndCondition =
+    fun and(and: And.() -> List<ICondition>): ICondition =
         And.parse(and.invoke(And()))
 
-    fun or(or: Or.() -> List<ICondition>): OrCondition =
+    fun or(or: Or.() -> List<ICondition>): ICondition =
         Or.parse(or.invoke(Or()))
 
-    fun itemExists(location: String): ItemExistsCondition =
+    fun itemExists(location: String): ICondition =
         ItemExistsCondition(location)
 
-    fun itemExists(identifier: ResourceLocation): ItemExistsCondition =
+    fun itemExists(identifier: ResourceLocation): ICondition =
         ItemExistsCondition(identifier)
 
     fun itemExists(idList: ItemExists.() -> Unit): ICondition =
