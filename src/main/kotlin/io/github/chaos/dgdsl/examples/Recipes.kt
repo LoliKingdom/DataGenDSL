@@ -20,10 +20,10 @@ class Recipes(generatorIn: DataGenerator) : RecipeProvider(generatorIn) {
             condition {
                 and {
                     not(modLoaded("minecraft")) +
-                            itemExists {
-                                "minecraft" to "dirt"
-                            } +
-                            False
+                    itemExists {
+                          "minecraft" to "dirt"
+                    } +
+                    False
                 }
             }
 
@@ -34,7 +34,7 @@ class Recipes(generatorIn: DataGenerator) : RecipeProvider(generatorIn) {
                             xxx
                             xxx
                             xxx
-                        """.trimIndent()
+                        """
                     }
 
                     key {
@@ -53,10 +53,10 @@ class Recipes(generatorIn: DataGenerator) : RecipeProvider(generatorIn) {
                 condition {
                     and {
                         not(modLoaded("minecraft")) +
-                                itemExists {
-                                    "minecraft" to "dirt"
-                                } +
-                                False
+                        itemExists {
+                              "minecraft" to "dirt"
+                        } +
+                        False
                     }
                 }
 
@@ -85,10 +85,10 @@ class Recipes(generatorIn: DataGenerator) : RecipeProvider(generatorIn) {
             condition {
                 and {
                     not(modLoaded("minecraft")) +
-                            itemExists {
-                                "minecraft" to "dirt"
-                            } +
-                            False
+                    itemExists {
+                          "minecraft" to "dirt"
+                    } +
+                    False
                 }
             }
 
@@ -99,7 +99,7 @@ class Recipes(generatorIn: DataGenerator) : RecipeProvider(generatorIn) {
                             xxx
                             xxx
                             xxx
-                        """.trimIndent()
+                        """
                     }
 
                     key {
