@@ -1,12 +1,11 @@
 package io.github.chaos.dgdsl.builder
 
-import io.github.chaos.dgdsl.makeID
 import io.github.chaos.dgdsl.pairToID
 import net.minecraft.data.IFinishedRecipe
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.common.crafting.ConditionalAdvancement
 import net.minecraftforge.common.crafting.ConditionalRecipe
-import net.minecraftforge.common.crafting.conditions.*
+import net.minecraftforge.common.crafting.conditions.ICondition
 import java.util.function.Consumer
 
 class ConditionalRecipeBuilder(private val builder: ConditionalRecipe.Builder = ConditionalRecipe.Builder()) {

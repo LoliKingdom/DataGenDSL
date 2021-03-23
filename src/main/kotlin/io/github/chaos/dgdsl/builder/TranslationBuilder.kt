@@ -6,10 +6,9 @@ import net.minecraft.entity.EntityType
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.potion.Effect
-import java.util.*
 
 class TranslationBuilder {
-    private val data = TreeMap<Any, String>()
+    private val data = mutableMapOf<Any, String>()
 
     infix fun Block.to(name: String) {
         data[this] = name
@@ -39,11 +38,6 @@ class TranslationBuilder {
         data[this] = name
     }
 
-    fun build(): TreeMap<Any, String> =
+    fun build(): Map<Any, String> =
         data
-
-    operator fun TreeMap<*, *>.set(key: Any, name: String) {
-        if (this.let { this[key] = name; this[key] != null })
-            throw IllegalStateException("Duplicate translation key $key")
-    }
 }

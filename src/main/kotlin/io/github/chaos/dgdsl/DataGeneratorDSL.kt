@@ -1,5 +1,7 @@
 package io.github.chaos.dgdsl
 
+import io.github.chaos.dgdsl.examples.Lang
+import io.github.chaos.dgdsl.examples.NBTTest
 import io.github.chaos.dgdsl.examples.Recipes
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
@@ -11,8 +13,6 @@ import thedarkcolour.kotlinforforge.forge.MOD_BUS
 @Mod(DataGeneratorDSL.MODID)
 object DataGeneratorDSL {
     const val MODID = "data_gen_dsl"
-
-    private const val DEBUG_MODE = true
 
     private val LOGGER = LogManager.getLogger()
 
@@ -26,13 +26,13 @@ object DataGeneratorDSL {
     }
 
     private fun onGatherData(event: GatherDataEvent) {
-        if (!DEBUG_MODE)
-            return
+        NBTTest.test()
 
         val generator = event.generator
 
-        if (event.includeServer()) {
-            generator.addProvider(Recipes(generator))
-        }
+        generator.addProvider(Recipes(generator))
+
+        generator.addProvider(Lang(generator))
+
     }
 }

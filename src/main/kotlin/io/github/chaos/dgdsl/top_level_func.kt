@@ -4,6 +4,7 @@ import io.github.chaos.dgdsl.builder.ConditionalRecipeBuilder
 import io.github.chaos.dgdsl.builder.LootPoolBuilder
 import io.github.chaos.dgdsl.builder.RecipeBuilder
 import io.github.chaos.dgdsl.builder.TranslationBuilder
+import io.github.chaos.dgdsl.builder.nbt.CompoundBuilder
 import net.minecraft.block.Block
 import net.minecraft.data.ShapedRecipeBuilder
 import net.minecraft.enchantment.Enchantment
@@ -11,6 +12,7 @@ import net.minecraft.entity.EntityType
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.loot.LootPool
+import net.minecraft.nbt.CompoundNBT
 import net.minecraft.potion.Effect
 import net.minecraft.util.IItemProvider
 import net.minecraftforge.common.data.LanguageProvider
@@ -24,7 +26,7 @@ fun conditionalRecipe(builder: ConditionalRecipeBuilder.() -> Unit): Conditional
 fun lootPool(builder: LootPoolBuilder.() -> Unit): LootPool.Builder =
     LootPoolBuilder(LootPool.builder()).apply(builder).raw()
 
-fun LanguageProvider.add(builder: TranslationBuilder.() -> Unit) {
+fun LanguageProvider.add(builder: TranslationBuilder.() -> Unit) =
     TranslationBuilder().apply(builder).build().forEach { (k, v) ->
         when (k) {
             is Block -> add(k, v)
@@ -36,4 +38,6 @@ fun LanguageProvider.add(builder: TranslationBuilder.() -> Unit) {
             is String -> add(k, v)
         }
     }
-}
+
+fun nbt(builder: CompoundBuilder.() -> Unit): CompoundNBT =
+    CompoundBuilder().apply(builder).build()

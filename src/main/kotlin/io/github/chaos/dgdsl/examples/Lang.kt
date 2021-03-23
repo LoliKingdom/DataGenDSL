@@ -1,6 +1,5 @@
 package io.github.chaos.dgdsl.examples
 
-import io.github.chaos.dgdsl.DataGeneratorDSL
 import io.github.chaos.dgdsl.DataGeneratorDSL.MODID
 import io.github.chaos.dgdsl.add
 import net.minecraft.block.Blocks
@@ -11,7 +10,7 @@ import net.minecraft.item.Items
 import net.minecraft.potion.Effects
 import net.minecraftforge.common.data.LanguageProvider
 
-class Lang(gen: DataGenerator) : LanguageProvider(gen, DataGeneratorDSL.MODID, "en_us") {
+class Lang(gen: DataGenerator) : LanguageProvider(gen, MODID, "en_us") {
     override fun addTranslations() {
         add {
             Blocks.STONE to "Stone"
