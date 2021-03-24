@@ -1,4 +1,7 @@
 package io.github.chaos.dgdsl.builder
 
-class ItemModelBuilder {
+/**
+ *  Incomplete Class
+ */
+internal class ItemModelBuilder {
 }

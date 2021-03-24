@@ -19,10 +19,10 @@ class ConditionBuilder {
     fun or(or: Or.() -> List<ICondition>): ICondition =
         Or.parse(or.invoke(Or()))
 
-    fun itemExists(location: String): ICondition =
+    fun itemExists(location: String): ItemExistsCondition =
         ItemExistsCondition(location)
 
-    fun itemExists(identifier: ResourceLocation): ICondition =
+    fun itemExists(identifier: ResourceLocation): ItemExistsCondition =
         ItemExistsCondition(identifier)
 
     fun itemExists(idList: ItemExists.() -> Unit): ICondition =
@@ -33,6 +33,15 @@ class ConditionBuilder {
 
     fun modLoaded(modIDs: ModLoaded.() -> Unit): ICondition =
         ModLoaded().apply(modIDs).parse()
+
+    fun tagEmpty(location: String): TagEmptyCondition =
+        TagEmptyCondition(location)
+
+    fun tagEmpty(identifier: ResourceLocation): TagEmptyCondition =
+        TagEmptyCondition(identifier)
+
+    fun tagEmpty(idList: TagEmpty.() -> Unit): ICondition =
+        TagEmpty().apply(idList).parse()
 
     interface IFactorParser {
         operator fun ICondition.plus(condition: ICondition): MutableList<ICondition> =
@@ -87,6 +96,25 @@ class ConditionBuilder {
                 ModLoadedCondition(modIDs.first())
             } else {
                 AndCondition(*modIDs.map(::ModLoadedCondition).toTypedArray())
+            }
+    }
+
+    inner class TagEmpty {
+        private val identifiers = mutableListOf<ResourceLocation>()
+
+        operator fun String.unaryPlus() {
+            identifiers += ResourceLocation(this)
+        }
+
+        infix fun String.to(path: String) {
+            identifiers += ResourceLocation(this, path)
+        }
+
+        fun parse(): ICondition =
+            if (identifiers.size == 1) {
+                ItemExistsCondition(identifiers.first())
+            } else {
+                AndCondition(*identifiers.map(::TagEmptyCondition).toTypedArray())
             }
     }
 }

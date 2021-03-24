@@ -1,11 +1,9 @@
 package io.github.chaos.dgdsl
 
-import io.github.chaos.dgdsl.builder.ConditionalRecipeBuilder
-import io.github.chaos.dgdsl.builder.LootPoolBuilder
-import io.github.chaos.dgdsl.builder.RecipeBuilder
-import io.github.chaos.dgdsl.builder.TranslationBuilder
+import io.github.chaos.dgdsl.builder.*
 import io.github.chaos.dgdsl.builder.nbt.CompoundBuilder
 import net.minecraft.block.Block
+import net.minecraft.data.ItemModelProvider
 import net.minecraft.data.ShapedRecipeBuilder
 import net.minecraft.enchantment.Enchantment
 import net.minecraft.entity.EntityType
