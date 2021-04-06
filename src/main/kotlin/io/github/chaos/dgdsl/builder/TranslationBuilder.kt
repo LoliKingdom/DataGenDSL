@@ -7,7 +7,7 @@ import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.potion.Effect
 
-class TranslationBuilder {
+class TranslationBuilder : AbstractBuilder() {
     private val data = mutableMapOf<Any, String>()
 
     infix fun Block.to(name: String) {

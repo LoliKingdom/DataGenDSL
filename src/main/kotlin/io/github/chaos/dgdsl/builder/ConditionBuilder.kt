@@ -3,7 +3,7 @@ package io.github.chaos.dgdsl.builder
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.common.crafting.conditions.*
 
-class ConditionBuilder {
+open class ConditionBuilder : AbstractBuilder() {
     val True = TrueCondition.INSTANCE
     val False = FalseCondition.INSTANCE
 
@@ -51,21 +51,21 @@ class ConditionBuilder {
             mutableListOf(this)
     }
 
-    class And : IFactorParser {
+    class And : ConditionBuilder(), IFactorParser {
         companion object {
             fun parse(conditions: List<ICondition>): AndCondition =
                 AndCondition(*conditions.toTypedArray())
         }
     }
 
-    class Or : IFactorParser {
+    class Or : ConditionBuilder(), IFactorParser {
         companion object {
             fun parse(conditions: List<ICondition>): OrCondition =
                 OrCondition(*conditions.toTypedArray())
         }
     }
 
-    inner class ItemExists {
+    inner class ItemExists : AbstractBuilder() {
         private val itemIDs = mutableListOf<ResourceLocation>()
 
         operator fun String.unaryPlus() {
@@ -84,7 +84,7 @@ class ConditionBuilder {
             }
     }
 
-    inner class ModLoaded {
+    inner class ModLoaded : AbstractBuilder() {
         private val modIDs = mutableListOf<String>()
 
         operator fun String.unaryPlus() {
@@ -99,7 +99,7 @@ class ConditionBuilder {
             }
     }
 
-    inner class TagEmpty {
+    inner class TagEmpty : AbstractBuilder() {
         private val identifiers = mutableListOf<ResourceLocation>()
 
         operator fun String.unaryPlus() {

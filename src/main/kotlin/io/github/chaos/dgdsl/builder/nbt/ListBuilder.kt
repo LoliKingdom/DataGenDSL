@@ -1,9 +1,10 @@
 package io.github.chaos.dgdsl.builder.nbt
 
+import io.github.chaos.dgdsl.builder.AbstractBuilder
 import net.minecraft.nbt.*
 import java.util.*
 
-class ListBuilder(private val list: ListNBT = ListNBT()) {
+class ListBuilder(private val list: ListNBT = ListNBT()) : AbstractBuilder() {
     constructor(list: ListNBT = ListNBT(), elements: Collection<INBT>) : this(list) {
         list.addAll(elements)
     }
@@ -23,7 +24,7 @@ class ListBuilder(private val list: ListNBT = ListNBT()) {
             is Short -> ShortNBT.valueOf(this) // Unusable
             is Int -> IntNBT.valueOf(this) // Unusable
             is Long -> LongNBT.valueOf(this) // Unusable
-            is UUID -> NBTUtil.func_240626_a_(this)
+            is UUID -> NBTUtil.createUUID(this)
             is Float -> FloatNBT.valueOf(this) // Unusable
             is Double -> DoubleNBT.valueOf(this) // Unusable
             is String -> StringNBT.valueOf(this)

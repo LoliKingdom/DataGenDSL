@@ -8,7 +8,7 @@ import net.minecraftforge.common.crafting.ConditionalRecipe
 import net.minecraftforge.common.crafting.conditions.ICondition
 import java.util.function.Consumer
 
-class ConditionalRecipeBuilder(private val builder: ConditionalRecipe.Builder = ConditionalRecipe.Builder()) {
+class ConditionalRecipeBuilder(private val builder: ConditionalRecipe.Builder = ConditionalRecipe.Builder()) : AbstractBuilder() {
     fun condition(condition: ConditionBuilder.() -> ICondition) {
         builder.addCondition(condition.invoke(ConditionBuilder()))
     }

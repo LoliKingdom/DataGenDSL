@@ -13,18 +13,18 @@ import net.minecraft.util.ResourceLocation
 import net.minecraft.util.text.ITextComponent
 import java.util.function.Consumer
 
-class AdvancementBuilder(private val builder: Advancement.Builder = Advancement.Builder.builder()) {
+class AdvancementBuilder(private val builder: Advancement.Builder = Advancement.Builder.advancement()) : AbstractBuilder() {
     lateinit var parentIdentifier: ResourceLocation
     lateinit var parentAdvancement: Advancement
 
     fun parent(parent: Advancement) {
         parentAdvancement = parent
-        builder.withParent(parent)
+        builder.parent(parent)
     }
 
     fun parentID(id: ResourceLocation) {
         parentIdentifier = id
-        builder.withParentId(id)
+        builder.parent(id)
     }
 
     fun parentID(id: () -> Pair<String, String>) {
@@ -32,30 +32,30 @@ class AdvancementBuilder(private val builder: Advancement.Builder = Advancement.
     }
 
     fun display(info: DisplayInfo) {
-        builder.withDisplay(info.build())
+        builder.display(info.build())
     }
 
     fun display(info: () -> DisplayInfo) {
-        builder.withDisplay(info.invoke().build())
+        builder.display(info.invoke().build())
     }
 
     fun reward(reward: AdvancementRewardBuilder.() -> Unit) {
-        builder.withRewards(AdvancementRewardBuilder().apply(reward).builder())
+        builder.rewards(AdvancementRewardBuilder().apply(reward).builder())
     }
 
     fun criterion(criterion: CriterionBuilder.() -> Unit) {
         val criterions = CriterionBuilder().apply(criterion).build()
 
-        criterions.forEach(builder::withCriterion)
+        criterions.forEach(builder::addCriterion)
     }
 
     fun criterion(criterionKey: () -> Pair<String, Criterion>) {
         val (key, criterion) = criterionKey.invoke()
-        builder.withCriterion(key, criterion)
+        builder.addCriterion(key, criterion)
     }
 
     fun requirementsStrategy(requirementsStrategy: IRequirementsStrategy) {
-        builder.withRequirementsStrategy(requirementsStrategy)
+        builder.requirements(requirementsStrategy)
     }
 
     inline fun resolveParent(crossinline lookup: (ResourceLocation) -> Advancement): Boolean =
@@ -84,16 +84,16 @@ class AdvancementBuilder(private val builder: Advancement.Builder = Advancement.
         builder
 
     fun register(consumer: Consumer<Advancement>, id: String): Advancement =
-        builder.register(consumer, id)
+        builder.save(consumer, id)
 
     fun serialize(): JsonObject =
-        builder.serialize()
+        builder.serializeToJson()
 
     fun writeTo(buf: PacketBuffer) =
-        builder.writeTo(buf)
+        builder.serializeToNetwork(buf)
 
     fun readFrom(buf: PacketBuffer) =
-        Advancement.Builder.readFrom(buf)
+        Advancement.Builder.fromNetwork(buf)
 
     fun getCriteria(): Map<String, Criterion> =
         builder.criteria

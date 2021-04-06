@@ -5,15 +5,15 @@ import net.minecraft.item.crafting.Ingredient
 import net.minecraft.tags.ITag
 import net.minecraft.util.IItemProvider
 
-class RecipeKeyBuilder {
+class RecipeKeyBuilder : AbstractBuilder() {
     private val keyMap = mutableMapOf<Char, Ingredient>()
 
     infix fun Char.to(item: IItemProvider) {
-        keyMap[this] = Ingredient.fromItems(item)
+        keyMap[this] = Ingredient.of(item)
     }
 
     infix fun Char.to(tag: ITag<Item>) {
-        keyMap[this] = Ingredient.fromTag(tag)
+        keyMap[this] = Ingredient.of(tag)
     }
 
     infix fun Char.to(ingredient: Ingredient) {

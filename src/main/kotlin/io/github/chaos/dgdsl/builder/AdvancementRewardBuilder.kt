@@ -4,7 +4,7 @@ import io.github.chaos.dgdsl.pairToID
 import net.minecraft.advancements.AdvancementRewards
 import net.minecraft.util.ResourceLocation
 
-class AdvancementRewardBuilder(private val builder: AdvancementRewards.Builder = AdvancementRewards.Builder()) {
+class AdvancementRewardBuilder(private val builder: AdvancementRewards.Builder = AdvancementRewards.Builder()) : AbstractBuilder() {
     fun experience(experience: Int) {
         builder.addExperience(experience)
     }

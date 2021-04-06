@@ -22,7 +22,7 @@ fun conditionalRecipe(builder: ConditionalRecipeBuilder.() -> Unit): Conditional
     ConditionalRecipeBuilder().apply(builder)
 
 fun lootPool(builder: LootPoolBuilder.() -> Unit): LootPool.Builder =
-    LootPoolBuilder(LootPool.builder()).apply(builder).raw()
+    LootPoolBuilder(LootPool.lootPool()).apply(builder).raw()
 
 fun LanguageProvider.add(builder: TranslationBuilder.() -> Unit) =
     TranslationBuilder().apply(builder).build().forEach { (k, v) ->

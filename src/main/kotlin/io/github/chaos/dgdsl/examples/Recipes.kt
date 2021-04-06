@@ -13,7 +13,7 @@ import net.minecraft.util.text.StringTextComponent
 import java.util.function.Consumer
 
 class Recipes(generatorIn: DataGenerator) : RecipeProvider(generatorIn) {
-    override fun registerRecipes(consumer: Consumer<IFinishedRecipe>) {
+    override fun buildShapelessRecipes(consumer: Consumer<IFinishedRecipe>) {
         val ID = ResourceLocation("data_gen_dsl_test", "conditional")
 
         conditionalRecipe {
@@ -44,7 +44,7 @@ class Recipes(generatorIn: DataGenerator) : RecipeProvider(generatorIn) {
                     group("")
 
                     criterion {
-                        "has_dirt" to hasItem(Blocks.DIRT)
+                        "has_dirt" to has(Blocks.DIRT)
                     }
                 }.build(this)
             }
@@ -109,7 +109,7 @@ class Recipes(generatorIn: DataGenerator) : RecipeProvider(generatorIn) {
                     group("")
 
                     criterion {
-                        "has_dirt" to hasItem(Blocks.DIRT)
+                        "has_dirt" to has(Blocks.DIRT)
                     }
                 }.build(this)
             }

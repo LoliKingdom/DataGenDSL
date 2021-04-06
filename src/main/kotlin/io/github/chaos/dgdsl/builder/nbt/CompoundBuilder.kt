@@ -1,10 +1,10 @@
 package io.github.chaos.dgdsl.builder.nbt
 
+import io.github.chaos.dgdsl.builder.AbstractBuilder
 import net.minecraft.nbt.*
-import java.lang.IllegalArgumentException
 import java.util.*
 
-class CompoundBuilder(val compound: CompoundNBT = CompoundNBT()) {
+class CompoundBuilder(val compound: CompoundNBT = CompoundNBT()) : AbstractBuilder() {
     fun compound(builder: () -> Pair<String, CompoundBuilder.() -> Unit>) {
         val (k, v) = builder.invoke()
 
@@ -33,7 +33,7 @@ class CompoundBuilder(val compound: CompoundNBT = CompoundNBT()) {
                 Short::class -> ShortNBT.valueOf(it as Short)
                 Int::class -> IntNBT.valueOf(it as Int)
                 Long::class -> LongNBT.valueOf(it as Long)
-                UUID::class -> NBTUtil.func_240626_a_(it as UUID)
+                UUID::class -> NBTUtil.createUUID(it as UUID)
                 Float::class -> FloatNBT.valueOf(it as Float)
                 Double::class -> DoubleNBT.valueOf(it as Double)
                 String::class -> StringNBT.valueOf(it as String)
@@ -113,7 +113,7 @@ class CompoundBuilder(val compound: CompoundNBT = CompoundNBT()) {
     fun uuid(builder: () -> Pair<String, UUID>) {
         val (k, v) = builder.invoke()
 
-        compound.putUniqueId(k, v)
+        compound.putUUID(k, v)
     }
 
     fun uuid(key: String, value: UUID) =

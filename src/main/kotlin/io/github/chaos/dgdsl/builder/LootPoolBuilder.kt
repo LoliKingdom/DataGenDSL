@@ -5,18 +5,18 @@ import net.minecraft.loot.ConstantRange
 import net.minecraft.loot.LootPool
 import net.minecraft.loot.StandaloneLootEntry
 
-class LootPoolBuilder(private val builder: LootPool.Builder) {
+class LootPoolBuilder(private val builder: LootPool.Builder) : AbstractBuilder() {
     fun name(name: String) =
         builder.name(name)
 
     fun rolls(value: Int) =
-        builder.rolls(ConstantRange.of(value))
+        builder.setRolls(ConstantRange.exactly(value))
 
     fun rolls(value: () -> ConstantRange) =
-        builder.rolls(value.invoke())
+        builder.setRolls(value.invoke())
 
     fun entry(entry: LootEntryBuilder.() -> StandaloneLootEntry.Builder<*>) =
-        builder.addEntry(LootEntryBuilder().run(entry))
+        builder.add(LootEntryBuilder().run(entry))
 
     fun raw(): LootPool.Builder =
         builder

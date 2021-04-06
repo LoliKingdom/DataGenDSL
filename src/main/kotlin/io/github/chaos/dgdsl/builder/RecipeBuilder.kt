@@ -6,41 +6,41 @@ import net.minecraft.util.IItemProvider
 import net.minecraft.util.ResourceLocation
 import java.util.function.Consumer
 
-class RecipeBuilder(private val builder: ShapedRecipeBuilder, private val result: IItemProvider) {
+class RecipeBuilder(private val builder: ShapedRecipeBuilder, private val result: IItemProvider) : AbstractBuilder() {
     fun pattern(patternLines: () -> String) {
         val patterns = patternLines.invoke().replace("\\s".toRegex(), "").chunked(3)
 
         for (pattern in patterns)
-            builder.patternLine(pattern)
+            builder.pattern(pattern)
     }
 
     fun key(keys: RecipeKeyBuilder.() -> Unit) {
         val keyMap = RecipeKeyBuilder().apply(keys).build()
 
-        keyMap.forEach(builder::key)
+        keyMap.forEach(builder::define)
     }
 
     fun group(group: String) {
-        builder.setGroup(group)
+        builder.group(group)
     }
 
     fun criterion(criterions: CriterionBuilder.() -> Unit) {
         val criterionMap = CriterionBuilder().apply(criterions).build()
 
-        criterionMap.forEach(builder::addCriterion)
+        criterionMap.forEach(builder::unlockedBy)
     }
 
     fun build(
         consumer: Consumer<IFinishedRecipe>
-    ) = builder.build(consumer)
+    ) = builder.save(consumer)
 
     fun build(
         consumer: Consumer<IFinishedRecipe>,
         id: ResourceLocation
-    ) = builder.build(consumer, id)
+    ) = builder.save(consumer, id)
 
     fun build(
         consumer: Consumer<IFinishedRecipe>,
         save: String
-    ) = builder.build(consumer, save)
+    ) = builder.save(consumer, save)
 }

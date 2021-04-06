@@ -2,7 +2,7 @@ package io.github.chaos.dgdsl.builder
 
 import net.minecraft.advancements.ICriterionInstance
 
-class CriterionBuilder {
+class CriterionBuilder : AbstractBuilder() {
     private val criterionMap = mutableMapOf<String, ICriterionInstance>()
 
     infix fun String.to(criterionIn: ICriterionInstance) {

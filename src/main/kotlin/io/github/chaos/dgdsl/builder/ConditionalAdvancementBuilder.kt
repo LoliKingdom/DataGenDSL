@@ -7,7 +7,7 @@ import net.minecraftforge.common.crafting.ConditionalAdvancement
 import net.minecraftforge.common.crafting.conditions.ICondition
 import java.util.function.Consumer
 
-class ConditionalAdvancementBuilder(private val builder: ConditionalAdvancement.Builder = ConditionalAdvancement.builder()) {
+class ConditionalAdvancementBuilder(private val builder: ConditionalAdvancement.Builder = ConditionalAdvancement.builder()) : AbstractBuilder() {
     fun condition(condition: ConditionBuilder.() -> ICondition) {
         builder.addCondition(condition.invoke(ConditionBuilder()))
     }
