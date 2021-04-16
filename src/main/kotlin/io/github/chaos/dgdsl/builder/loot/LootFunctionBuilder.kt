@@ -1,16 +1,21 @@
 package io.github.chaos.dgdsl.builder.loot
 
+import io.github.chaos.dgdsl.ItemLootEntryBuilder
+import io.github.chaos.dgdsl.TableLootEntryBuilder
+import io.github.chaos.dgdsl.TagLootEntryBuilder
 import io.github.chaos.dgdsl.builder.AbstractBuilder
 import io.github.chaos.dgdsl.builder.BuilderEntryMarker
 import io.github.chaos.dgdsl.builder.utils.ICommonLootEntryArgFunctions
 import io.github.chaos.dgdsl.builder.utils.IListInfixFunctions
 import net.minecraft.block.Block
 import net.minecraft.enchantment.Enchantment
+import net.minecraft.item.Item
 import net.minecraft.loot.*
 import net.minecraft.loot.conditions.ILootCondition
 import net.minecraft.loot.functions.*
 import net.minecraft.nbt.CompoundNBT
 import net.minecraft.potion.Effect
+import net.minecraft.tags.ITag
 import net.minecraft.util.IItemProvider
 import net.minecraft.util.ResourceLocation
 import net.minecraft.util.text.ITextComponent
@@ -183,13 +188,22 @@ class LootFunctionBuilder : AbstractBuilder(), IListInfixFunctions {
 
     inner class ContentCollector : LootFunctionCollector(), IListInfixFunctions {
         private val builder = SetContents.setContents()
-        private val lootEntries = mutableListOf<LootEntry.Builder<*>>()
+        private val entries = mutableListOf<LootEntry.Builder<*>>()
 
-        fun content(item: IItemProvider, lootEntry: LootEntryBuilder.ItemLootEntryBuilder.() -> Unit) =
-            lootEntries add LootEntryBuilder.ItemLootEntryBuilder(item).apply(lootEntry).build()
+        fun itemLoot(item: IItemProvider, builder: ItemLootEntryBuilder.() -> Unit = {}) =
+            entries add ItemLootEntryBuilder(item).apply(builder).build()
+
+        fun tagLoot(tag: ITag<Item>, builder: TagLootEntryBuilder.() -> Unit = {}) =
+            entries add TagLootEntryBuilder(tag).apply(builder).build()
+
+        fun tableLoot(reference: ResourceLocation, builder: TableLootEntryBuilder.() -> Unit = {}) =
+            entries add TableLootEntryBuilder(reference).apply(builder).build()
+
+        fun alternativesLoot(builder: LootEntryBuilder.AlternativesEntryBuilder.() -> Unit = {}) =
+            entries add LootEntryBuilder.AlternativesEntryBuilder().apply(builder).build()
 
         fun collect() =
-            builder.apply { lootEntries.forEach(::withEntry) }
+            builder.apply { entries.forEach(::withEntry) }
     }
 
     /**

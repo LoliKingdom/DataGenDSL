@@ -8,6 +8,7 @@ import net.minecraft.data.DataGenerator
 import net.minecraft.data.DirectoryCache
 import net.minecraft.data.IDataProvider
 import net.minecraft.data.LootTableProvider
+import net.minecraft.item.Items
 import net.minecraft.loot.LootParameterSets
 import net.minecraft.loot.LootTable
 import net.minecraft.loot.functions.CopyName
@@ -17,8 +18,6 @@ import org.apache.logging.log4j.LogManager
 import java.io.IOException
 
 import net.minecraft.loot.LootTableManager
-
-
 
 
 /**
@@ -40,22 +39,23 @@ abstract class BaseLoot(private val dataGenerator: DataGenerator) : LootTablePro
         val builder = lootPool {
             name(name)
             rolls(1)
-            entry {
-                itemLoot(block) {
-                    function {
-                        copyName(CopyName.Source.BLOCK_ENTITY)
-                        copyNbt(CopyNbt.Source.BLOCK_ENTITY) {
-                            copy("inv", "BlockEntityTag.inv", CopyNbt.Action.REPLACE)
-                            copy("energy", "BlockEntityTag.energy", CopyNbt.Action.REPLACE)
-                        }
-                        content {
-                            // TODO: ADD MORE LOOT ENTRY BUILDERS
-                        }
+            itemLoot(block) {
+                function {
+                    copyName(CopyName.Source.BLOCK_ENTITY)
+                    copyNbt(CopyNbt.Source.BLOCK_ENTITY) {
+                        copy("inv", "BlockEntityTag.inv", CopyNbt.Action.REPLACE)
+                        copy("energy", "BlockEntityTag.energy", CopyNbt.Action.REPLACE)
                     }
-                    condition {
-                        randomChance(0.1f)
+                    content {
+                        itemLoot(Items.ACACIA_BOAT)
                     }
                 }
+                condition {
+                    randomChance(0.1f)
+                }
+            }
+            alternativesLoot {
+                itemLoot(Items.ITEM_FRAME)
             }
             condition {
                 surviveExplosion()
