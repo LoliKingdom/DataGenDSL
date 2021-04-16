@@ -1,6 +1,7 @@
 package io.github.chaos.dgdsl.builder.loot
 
 import io.github.chaos.dgdsl.builder.AbstractBuilder
+import io.github.chaos.dgdsl.builder.BuilderEntryMarker
 import io.github.chaos.dgdsl.builder.utils.ICommonLootEntryArgFunctions
 import io.github.chaos.dgdsl.builder.utils.IListInfixFunctions
 import net.minecraft.block.Block
@@ -19,7 +20,7 @@ import net.minecraft.world.storage.MapDecoration
 class LootFunctionBuilder : AbstractBuilder(), IListInfixFunctions {
     private val functions = mutableListOf<ILootFunction.IBuilder>()
 
-    open class LootFunctionCollector {
+    open class LootFunctionCollector : AbstractBuilder() {
         private val conditions = mutableListOf<ILootCondition>()
 
         fun condition() {
@@ -59,7 +60,7 @@ class LootFunctionBuilder : AbstractBuilder(), IListInfixFunctions {
      */
 
     fun copyNbt(source: CopyNbt.Source, builder: CopyNbt.Builder.() -> Unit = {}) =
-        functions add CopyNbt.copyData(source).apply(builder)
+        functions.add(CopyNbt.copyData(source).apply(builder))
 
     /**
      *  Enchant Randomly

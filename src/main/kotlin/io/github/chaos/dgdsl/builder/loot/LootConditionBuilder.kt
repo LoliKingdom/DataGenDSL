@@ -1,56 +1,132 @@
 package io.github.chaos.dgdsl.builder.loot
 
 import io.github.chaos.dgdsl.builder.AbstractBuilder
-import io.github.chaos.dgdsl.builder.loot.conditions.ILootConditionCollector
-import io.github.chaos.dgdsl.builder.utils.IConcentrator2List
-import io.github.chaos.dgdsl.builder.utils.IListInfixFunctions
-import net.minecraft.advancements.criterion.DamageSourcePredicate
-import net.minecraft.advancements.criterion.StatePropertiesPredicate
+import net.minecraft.advancements.criterion.*
 import net.minecraft.block.Block
-import net.minecraft.loot.conditions.Alternative
-import net.minecraft.loot.conditions.BlockStateProperty
-import net.minecraft.loot.conditions.DamageSourceProperties
-import net.minecraft.loot.conditions.ILootCondition
+import net.minecraft.enchantment.Enchantment
+import net.minecraft.loot.LootContext
+import net.minecraft.loot.conditions.*
+import net.minecraft.util.math.BlockPos
 
-class LootConditionBuilder : AbstractBuilder(), IListInfixFunctions {
+class LootConditionBuilder : AbstractBuilder() {
     private val conditions = mutableListOf<ILootCondition.IBuilder>()
+
+    private fun add(condition: ILootCondition.IBuilder, invert: Boolean) {
+        this.conditions += if (invert) {
+            Inverted.invert(condition)
+        } else {
+            condition
+        }
+    }
 
     /**
      *  Alternative
      */
 
-    fun alternative(builder: AlternativeCollector.() -> Unit) =
-        conditions add AlternativeCollector().apply(builder).collect()
-
-    inner class AlternativeCollector : ILootConditionCollector, IConcentrator2List<ILootCondition.IBuilder> {
-        private val builder = Alternative.alternative()
-        private val conditions = mutableListOf<ILootCondition.IBuilder>()
-
-        fun alternative(conditions: IConcentrator2List<ILootCondition.IBuilder>.() -> List<ILootCondition.IBuilder>) =
-            conditions.invoke(IConcentrator2List.gen()).forEach(this.conditions::add)
-
-        override fun collect(): ILootCondition.IBuilder =
-            builder.apply { conditions.forEach(::or) }
-    }
+    fun alternative(builder: LootConditionBuilder.() -> Unit, invert: Boolean = false) =
+        add(Alternative.alternative(*LootConditionBuilder().apply(builder).build().toTypedArray()), invert)
 
     /**
      *  BlockState Property
      */
 
-    fun blockStateProperty(block: Block) =
-        conditions add BlockStateProperty.hasBlockStateProperties(block)
+    fun blockStateProperty(block: Block, invert: Boolean = false) =
+        add(BlockStateProperty.hasBlockStateProperties(block), invert)
 
-    fun blockStateProperty(block: Block, property: StatePropertiesPredicate.Builder) =
-        conditions add BlockStateProperty.hasBlockStateProperties(block).setProperties(property)
+    fun blockStateProperty(block: Block, property: StatePropertiesPredicate.Builder, invert: Boolean = false) =
+        add(BlockStateProperty.hasBlockStateProperties(block).setProperties(property), invert)
 
     /**
      *  Damage Source Properties
      */
 
-    fun damageSourceProperty(builder: DamageSourcePredicate.Builder) =
-        conditions add DamageSourceProperties.hasDamageSource(builder)
+    fun damageSourceProperty(builder: DamageSourcePredicate.Builder, invert: Boolean = false) =
+        add(DamageSourceProperties.hasDamageSource(builder), invert)
 
     /**
-     *
+     *  Entity Has Property
      */
+
+    fun entityPresent(target: LootContext.EntityTarget, invert: Boolean = false) =
+        add(EntityHasProperty.entityPresent(target), invert)
+
+    fun entityHasProperty(target: LootContext.EntityTarget, predicate: EntityPredicate, invert: Boolean = false) =
+        add(EntityHasProperty.hasProperties(target, predicate), invert)
+
+    fun entityHasProperty(target: LootContext.EntityTarget, builder: EntityPredicate.Builder, invert: Boolean = false) =
+        entityHasProperty(target, builder.build())
+
+    /**
+     *  Entity Has Score
+     */
+
+    /**
+     *  Inverted
+     *
+     *  NOTE: INVERTED IS ALREADY IMPLEMENTED IN EVERY POSSIBLE CONDITION FUNCTIONS.
+     */
+
+    /**
+     *  Killed By Player
+     */
+
+    fun killedByPlayer(invert: Boolean = false) =
+        add(KilledByPlayer.killedByPlayer(), invert)
+
+    /**
+     *  Location Check
+     */
+
+    fun checkLocation(builder: LocationPredicate.Builder, position: BlockPos = BlockPos.ZERO, invert: Boolean = false) =
+        add(LocationCheck.checkLocation(builder, position), invert)
+
+    /**
+     *  Match Tool
+     */
+
+    fun toolMatches(builder: ItemPredicate.Builder, invert: Boolean = false) =
+        add(MatchTool.toolMatches(builder), invert)
+
+    /**
+     *  Random Chance
+     */
+
+    fun randomChance(percentage: Float, invert: Boolean = false) =
+        add(RandomChance.randomChance(percentage), invert)
+
+    /**
+     *  Random Chance With Looting
+     */
+
+    fun randomChanceAndLootingBoost(percentage: Float, lootingBoost: Float, invert: Boolean = false) =
+        add(RandomChanceWithLooting.randomChanceAndLootingBoost(percentage, lootingBoost), invert)
+
+    /**
+     *  Reference
+     */
+
+    /**
+     *  Survives Explosion
+     */
+
+    fun surviveExplosion(invert: Boolean = false) =
+        add(SurvivesExplosion.survivesExplosion(), invert)
+
+    /**
+     *  Table Bonus
+     */
+
+    fun bonusLevelFlatChance(enchantment: Enchantment, vararg values: Float, invert: Boolean = false) =
+        add(TableBonus.bonusLevelFlatChance(enchantment, *values), invert)
+
+    /**
+     *  Time Check
+     */
+
+    /**
+     *  Weather Check
+     */
+
+    fun build(): List<ILootCondition.IBuilder> =
+        conditions
 }

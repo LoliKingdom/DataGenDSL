@@ -1,6 +1,7 @@
 package io.github.chaos.dgdsl
 
 import io.github.chaos.dgdsl.examples.Lang
+import io.github.chaos.dgdsl.examples.LootTable
 import io.github.chaos.dgdsl.examples.NBTTest
 import io.github.chaos.dgdsl.examples.Recipes
 import net.minecraftforge.fml.common.Mod
@@ -34,5 +35,6 @@ object DataGeneratorDSL {
 
         generator.addProvider(Lang(generator))
 
+        generator.addProvider(LootTable(generator))
     }
 }

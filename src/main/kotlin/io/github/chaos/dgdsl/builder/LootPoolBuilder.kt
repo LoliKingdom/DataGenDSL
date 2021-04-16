@@ -1,5 +1,6 @@
 package io.github.chaos.dgdsl.builder
 
+import io.github.chaos.dgdsl.builder.loot.LootConditionBuilder
 import io.github.chaos.dgdsl.builder.loot.LootEntryBuilder
 import net.minecraft.loot.ConstantRange
 import net.minecraft.loot.LootPool
@@ -17,6 +18,9 @@ class LootPoolBuilder(private val builder: LootPool.Builder) : AbstractBuilder()
 
     fun entry(entry: LootEntryBuilder.() -> StandaloneLootEntry.Builder<*>) =
         builder.add(LootEntryBuilder().run(entry))
+
+    fun condition(condition: LootConditionBuilder.() -> Unit) =
+        LootConditionBuilder().apply(condition).build().forEach(builder::`when`)
 
     fun raw(): LootPool.Builder =
         builder
