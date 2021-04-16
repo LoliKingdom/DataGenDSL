@@ -5,7 +5,7 @@ import net.minecraft.loot.functions.ILootFunction
 
 interface ILootEntryInfixFunctions {
     infix fun StandaloneLootEntry.Builder<*>.acceptFunctions(functions: List<ILootFunction.IBuilder>): StandaloneLootEntry.Builder<*> {
-        functions.forEach(this::acceptFunction)
+//        functions.forEach(this::acceptFunction)
 
         return this
     }
