@@ -11,7 +11,13 @@ object NBTTest {
                         "brb" to 10
                     }
                 }
+                compound {
+                    boolean("this_is_bool") {
+                        true
+                    }
+                }
             }
+
         }
 
         println(nbt)

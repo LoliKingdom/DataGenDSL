@@ -14,17 +14,7 @@ class CompoundBuilder(val compound: CompoundNBT = CompoundNBT()) : AbstractBuild
     fun compound(key: String, builder: CompoundBuilder.() -> Unit) =
         compound { key to builder }
 
-    fun list(builder: () -> Pair<String, ListBuilder.() -> Unit>) {
-        val (k, v) = builder.invoke()
-
-        compound.put(k, ListBuilder().apply(v).build())
-    }
-
-    fun list(key: String, builder: ListBuilder.() -> Unit) =
-        list { key to builder }
-
-    inline fun <reified T> list(elements: List<T>, builder: () -> Pair<String, ListBuilder.() -> Unit>) {
-        val (k, v) = builder.invoke()
+    inline fun <reified T> list(key: String, elements: List<T>) {
         val list = elements.map {
             when (T::class) {
                 INBT::class -> it as INBT
@@ -44,11 +34,11 @@ class CompoundBuilder(val compound: CompoundNBT = CompoundNBT()) : AbstractBuild
             }
         }
 
-        compound.put(k, ListBuilder(elements = list).apply(v).build())
+        compound.put(key, ListBuilder(elements = list).build())
     }
 
-    inline fun <reified T> list(key: String, elements: List<T>, noinline builder: ListBuilder.() -> Unit = {}) =
-        list(elements) { key to builder }
+    fun list(key: String, builder: ListBuilder.() -> Unit) =
+        list(key, ListBuilder().apply(builder).build())
 
     fun boolean(builder: () -> Pair<String, Boolean>) {
         val (k, v) = builder.invoke()
