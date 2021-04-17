@@ -3,7 +3,6 @@ package io.github.chaos.dgdsl.builder.loot
 import io.github.chaos.dgdsl.*
 import io.github.chaos.dgdsl.builder.AbstractBuilder
 import io.github.chaos.dgdsl.builder.utils.ICommonLootEntryArgFunctions
-import io.github.chaos.dgdsl.builder.utils.IListInfixFunctions
 import net.minecraft.block.Block
 import net.minecraft.enchantment.Enchantment
 import net.minecraft.item.Item
@@ -18,8 +17,13 @@ import net.minecraft.util.ResourceLocation
 import net.minecraft.world.gen.feature.structure.Structure
 import net.minecraft.world.storage.MapDecoration
 
-class LootFunctionBuilder : AbstractBuilder(), IListInfixFunctions {
+@Suppress("unused")
+class LootFunctionBuilder : AbstractBuilder() {
     private val functions = mutableListOf<ILootFunction.IBuilder>()
+
+    private fun add(function: ILootFunction.IBuilder) {
+        functions.add(function)
+    }
 
     abstract class LootFunctionCollector : AbstractBuilder() {
         private val conditions = mutableListOf<ILootCondition>()
@@ -34,49 +38,55 @@ class LootFunctionBuilder : AbstractBuilder(), IListInfixFunctions {
      */
 
     fun binomialWithBonusCount(enchantment: Enchantment, extra: Int, probability: Float) =
-        functions add ApplyBonus.addBonusBinomialDistributionCount(enchantment, probability, extra)
+        add(ApplyBonus.addBonusBinomialDistributionCount(enchantment, probability, extra))
 
     fun oreDrops(enchantment: Enchantment) =
-        functions add ApplyBonus.addOreBonusCount(enchantment)
+        add(ApplyBonus.addOreBonusCount(enchantment))
 
     fun uniformBonusCount(enchantment: Enchantment, bonusMultiplier: Int = 1) =
-        functions add ApplyBonus.addUniformBonusCount(enchantment, bonusMultiplier)
+        add(ApplyBonus.addUniformBonusCount(enchantment, bonusMultiplier))
 
     /**
      *  Copy BlockState
      */
 
     fun copyBlockState(block: Block, builder: CopyBlockState.Builder.() -> Unit = {}) =
-        functions add CopyBlockState.copyState(block).apply(builder)
+        add(CopyBlockState.copyState(block).apply(builder))
 
     /**
      *  Copy Name
      */
 
     fun copyName(source: CopyName.Source, builder: LootFunction.Builder<*>.() -> Unit = {}) =
-        functions add CopyName.copyName(source).apply(builder)
+        add(CopyName.copyName(source).apply(builder))
 
     /**
      *  Copy NBT
      */
 
     fun copyNbt(source: CopyNbt.Source, builder: CopyNbt.Builder.() -> Unit = {}) =
-        functions.add(CopyNbt.copyData(source).apply(builder))
+        add(CopyNbt.copyData(source).apply(builder))
 
     /**
      *  Enchant Randomly
      */
 
-    fun enchantRandomly(collector: EnchantmentCollector.() -> Unit, builder: LootFunction.Builder<*>.() -> Unit = {}) {
-        functions add EnchantmentCollector().apply(collector).collect().apply(builder)
-    }
+    fun enchantRandomly(collector: EnchantmentCollector.() -> Unit, builder: LootFunction.Builder<*>.() -> Unit = {}) =
+        add(EnchantmentCollector().apply(collector).collect().apply(builder))
 
-    inner class EnchantmentCollector : LootFunctionCollector(), IListInfixFunctions {
+    inner class EnchantmentCollector : LootFunctionCollector() {
         private val builder = EnchantRandomly.Builder()
         private val enchantments = mutableListOf<Enchantment>()
 
+        private fun add(enchantment: Enchantment) {
+            enchantments += enchantment
+        }
+
         fun enchantment(enchantment: () -> Enchantment) =
-            enchantments add enchantment.invoke()
+            add(enchantment.invoke())
+
+        fun enchantment(enchantment: Enchantment) =
+            add(enchantment)
 
         fun function(function: LootFunction.Builder<*>.() -> Unit) =
             builder.apply(function)
@@ -96,16 +106,16 @@ class LootFunctionBuilder : AbstractBuilder(), IListInfixFunctions {
         randomRange: IRandomRange,
         isTreasure: Boolean = false,
         enchantWithLevels: EnchantWithLevels.Builder.() -> Unit = {}
-    ) = functions add EnchantWithLevels.enchantWithLevels(randomRange)
+    ) = add(EnchantWithLevels.enchantWithLevels(randomRange)
         .also { if (isTreasure) it.allowTreasure() }
-        .apply(enchantWithLevels)
+        .apply(enchantWithLevels))
 
     /**
      *  Exploration Map
      */
 
     fun explorationMap(explorationMap: ExplorationMapCollector.() -> Unit) =
-        functions add ExplorationMapCollector().apply(explorationMap).collect()
+        add(ExplorationMapCollector().apply(explorationMap).collect())
 
     inner class ExplorationMapCollector : LootFunctionCollector() {
         private val builder: ExplorationMap.Builder = ExplorationMap.makeExplorationMap()
@@ -143,7 +153,7 @@ class LootFunctionBuilder : AbstractBuilder(), IListInfixFunctions {
      */
 
     fun explosionDecay(decay: LootFunction.Builder<*>.() -> Unit = {}) =
-        functions add ExplosionDecay.explosionDecay().apply(decay)
+        add(ExplosionDecay.explosionDecay().apply(decay))
 
     /**
      *  Fill Player Head
@@ -167,7 +177,7 @@ class LootFunctionBuilder : AbstractBuilder(), IListInfixFunctions {
             IntClamper.clamp(min, max)
         } else throw IllegalArgumentException("IntClamper requires at least one value.")
 
-        functions add LimitCount.limitCount(clamper).apply(builder)
+        add(LimitCount.limitCount(clamper).apply(builder))
     }
 
     /**
@@ -175,7 +185,7 @@ class LootFunctionBuilder : AbstractBuilder(), IListInfixFunctions {
      */
 
     fun lootEnchantBonus(min: Float, max: Float, limit: Int = 0, builder: LootFunction.Builder<*>.() -> Unit = {}) =
-        functions add LootingEnchantBonus.lootingMultiplier(RandomValueRange(min, max)).setLimit(limit).apply(builder)
+        add(LootingEnchantBonus.lootingMultiplier(RandomValueRange(min, max)).setLimit(limit).apply(builder))
 
     /**
      *  Set Attributes is not open to modders in default
@@ -186,9 +196,9 @@ class LootFunctionBuilder : AbstractBuilder(), IListInfixFunctions {
      */
 
     fun content(lootEntries: ContentCollector.() -> Unit) =
-        functions add ContentCollector().apply(lootEntries).collect()
+        add(ContentCollector().apply(lootEntries).collect())
 
-    inner class ContentCollector : LootFunctionCollector(), ILootEntryBuilder, IListInfixFunctions {
+    inner class ContentCollector : LootFunctionCollector(), ILootEntryBuilder {
         private val builder = SetContents.setContents()
         private val entries = mutableListOf<LootEntry.Builder<*>>()
 
@@ -223,7 +233,7 @@ class LootFunctionBuilder : AbstractBuilder(), IListInfixFunctions {
      */
 
     fun damage(min: Float, max: Float, builder: LootFunction.Builder<*>.() -> Unit) =
-        functions add SetDamage.setDamage(RandomValueRange(min, max)).apply(builder)
+        add(SetDamage.setDamage(RandomValueRange(min, max)).apply(builder))
 
     /**
      *  Set Loot Table is not open to modders in default
@@ -252,14 +262,14 @@ class LootFunctionBuilder : AbstractBuilder(), IListInfixFunctions {
      */
 
     fun nbt(nbt: CompoundNBT, builder: LootFunction.Builder<*>.() -> Unit) =
-        functions add SetNBT.setTag(nbt).apply(builder)
+        add(SetNBT.setTag(nbt).apply(builder))
 
     /**
      *  Set Stew Effect
      */
 
     fun stewEffect(builder: StewEffectCollector.() -> Unit) =
-        functions add StewEffectCollector().apply(builder).collect()
+        add(StewEffectCollector().apply(builder).collect())
 
     inner class StewEffectCollector : LootFunctionCollector(), ICommonLootEntryArgFunctions {
         private val builder = SetStewEffect.stewEffect()
@@ -283,7 +293,7 @@ class LootFunctionBuilder : AbstractBuilder(), IListInfixFunctions {
      */
 
     fun smelt(builder: LootFunction.Builder<*>.() -> Unit) =
-        functions add Smelt.smelted().apply(builder)
+        add(Smelt.smelted().apply(builder))
 
     fun build(): List<ILootFunction.IBuilder> =
         functions

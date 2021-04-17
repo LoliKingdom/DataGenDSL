@@ -1,56 +1,60 @@
 package io.github.chaos.dgdsl.builder.nbt
 
 import io.github.chaos.dgdsl.builder.AbstractBuilder
-import io.github.chaos.dgdsl.builder.utils.IListInfixFunctions
 import net.minecraft.nbt.*
 import java.util.*
 
-class ListBuilder(private val list: ListNBT = ListNBT()) : AbstractBuilder(), IListInfixFunctions {
+@Suppress("unused")
+class ListBuilder(private val list: ListNBT = ListNBT()) : AbstractBuilder() {
     constructor(list: ListNBT = ListNBT(), elements: Collection<INBT>) : this(list) {
         list.addAll(elements)
     }
 
+    private fun add(nbt: INBT) {
+        list += nbt
+    }
+
     fun boolean(boolean: Boolean) =
-        list add ByteNBT.valueOf(boolean)
+        add(ByteNBT.valueOf(boolean))
 
     fun byte(byte: Byte) =
-        list add ByteNBT.valueOf(byte)
+        add(ByteNBT.valueOf(byte))
 
     fun short(short: Short) =
-        list add ShortNBT.valueOf(short)
+        add(ShortNBT.valueOf(short))
 
     fun int(int: Int) =
-        list add IntNBT.valueOf(int)
+        add(IntNBT.valueOf(int))
 
     fun long(long: Long) =
-        list add LongNBT.valueOf(long)
+        add(LongNBT.valueOf(long))
 
     fun uuid(uuid: UUID) =
-        list add NBTUtil.createUUID(uuid)
+        add(NBTUtil.createUUID(uuid))
 
     fun float(float: Float) =
-        list add FloatNBT.valueOf(float)
+        add(FloatNBT.valueOf(float))
 
     fun double(double: Double) =
-        list add DoubleNBT.valueOf(double)
+        add(DoubleNBT.valueOf(double))
 
     fun string(string: String) =
-        list add StringNBT.valueOf(string)
+        add(StringNBT.valueOf(string))
 
     fun byteArray(byteArray: ByteArray) =
-        list add ByteArrayNBT(byteArray)
+        add(ByteArrayNBT(byteArray))
 
     fun intArray(intArray: IntArray) =
-        list add IntArrayNBT(intArray)
+        add(IntArrayNBT(intArray))
 
     fun longArray(longArray: LongArray) =
-        list add LongArrayNBT(longArray)
+        add(LongArrayNBT(longArray))
 
     fun compound(builder: CompoundBuilder.() -> Unit) =
-        list add CompoundBuilder().apply(builder).build()
+        add(CompoundBuilder().apply(builder).build())
 
     fun list(builder: ListBuilder.() -> Unit) =
-        list add ListBuilder().apply(builder).build()
+        add(ListBuilder().apply(builder).build())
 
     /**
      *  Unary plus does not work on primitive numeral types, such as int, long ,or double.

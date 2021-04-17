@@ -4,6 +4,7 @@ import io.github.chaos.dgdsl.builder.AbstractBuilder
 import net.minecraft.nbt.*
 import java.util.*
 
+@Suppress("unused")
 class CompoundBuilder(val compound: CompoundNBT = CompoundNBT()) : AbstractBuilder() {
     fun compound(builder: () -> Pair<String, CompoundBuilder.() -> Unit>) {
         val (k, v) = builder.invoke()

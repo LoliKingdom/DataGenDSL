@@ -3,6 +3,7 @@ package io.github.chaos.dgdsl.builder
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.common.crafting.conditions.*
 
+@Suppress("unused")
 open class ConditionBuilder : AbstractBuilder() {
     val True = TrueCondition.INSTANCE
     val False = FalseCondition.INSTANCE
