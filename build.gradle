@@ -10,10 +10,12 @@ buildscript {
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
 apply plugin: 'kotlin'
 
 version = '1.0.0'
-group = 'com.chaos.dgdsl'
+group = 'io.github.chaosunity.dgdsl'
 archivesBaseName = 'DataGeneratorDSL'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
@@ -100,4 +102,69 @@ jar {
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = project.group
+            artifactId = project.archivesBaseName
+            version = project.version
+
+            from(components["java"])
+
+            pom {
+                name.set("DataGeneratorDSL")
+                description.set("A Kotlin DSL designed for data generator purpose")
+                url.set("https://github.com/LoliKingdom/DataGenDSL")
+
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://www.opensource.org/licenses/mit-license.php")
+                        distribution.set("repo")
+                    }
+                }
+
+                developers {
+                    developer {
+                        id.set("ChAoS_UnItY")
+                        name.set("ChAoS UnITY")
+                    }
+                }
+
+                issueManagement {
+                    url.set("https://github.com/LoliKingdom/DataGenDSL/issues")
+                    system.set("GitHub Issues")
+                }
+
+                scm {
+                    connection.set("scm:git:git:github.com/LoliKingdom/DataGenDSL.git")
+                    developerConnection.set("scm:git:git@github.com:LoliKingdom/DataGenDSL.git")
+                    url.set("https://github.com/LoliKingdom/DataGenDSL")
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "DataGeneratorDSL"
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2")
+
+            credentials {
+                username = System.getenv("MAVEN_USERNAME")
+                password = System.getenv("MAVEN_PASSWORD")
+            }
+        }
+    }
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+signing {
+    sign publishing.publications.mavenJava
 }
