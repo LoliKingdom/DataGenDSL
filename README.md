@@ -15,8 +15,28 @@ A DSL for data generator, makes your life better.
 
 ## Installation
 
-TODO
+Groovy gradle:
+```groovy
+repositories {
+    maven { url 'https://jitpack.io' }
+}
 
+dependencies {
+    implementation fg.deobf('com.github.LoliKingdom:DataGenDSL:master-SNAPSHOT')
+}
+```
+
+Kotlin gradle: 
+```kotlin
+repositories {
+    maven(url = "https://jitpack.io")
+}
+
+dependencies {
+    implementation(project.the<DependencyManagementExtension>()
+        .deobf(project.dependencies.create('com.github.LoliKingdom:DataGenDSL:master-SNAPSHOT')))
+}
+```
 ## Table of Contents
 
 <table>

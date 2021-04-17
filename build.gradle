@@ -104,67 +104,7 @@ jar {
     }
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            groupId = project.group
-            artifactId = project.archivesBaseName
-            version = project.version
-
-            from(components["java"])
-
-            pom {
-                name.set("DataGeneratorDSL")
-                description.set("A Kotlin DSL designed for data generator purpose")
-                url.set("https://github.com/LoliKingdom/DataGenDSL")
-
-                licenses {
-                    license {
-                        name.set("MIT License")
-                        url.set("https://www.opensource.org/licenses/mit-license.php")
-                        distribution.set("repo")
-                    }
-                }
-
-                developers {
-                    developer {
-                        id.set("ChAoS_UnItY")
-                        name.set("ChAoS UnITY")
-                    }
-                }
-
-                issueManagement {
-                    url.set("https://github.com/LoliKingdom/DataGenDSL/issues")
-                    system.set("GitHub Issues")
-                }
-
-                scm {
-                    connection.set("scm:git:git:github.com/LoliKingdom/DataGenDSL.git")
-                    developerConnection.set("scm:git:git@github.com:LoliKingdom/DataGenDSL.git")
-                    url.set("https://github.com/LoliKingdom/DataGenDSL")
-                }
-            }
-        }
-    }
-
-    repositories {
-        maven {
-            name = "DataGeneratorDSL"
-            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2")
-
-            credentials {
-                username = System.getenv("MAVEN_USERNAME")
-                password = System.getenv("MAVEN_PASSWORD")
-            }
-        }
-    }
-}
-
 java {
     withJavadocJar()
     withSourcesJar()
-}
-
-signing {
-    sign publishing.publications.mavenJava
 }
