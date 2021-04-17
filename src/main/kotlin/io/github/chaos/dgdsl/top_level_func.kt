@@ -1,15 +1,17 @@
 package io.github.chaos.dgdsl
 
-import io.github.chaos.dgdsl.builder.*
+import io.github.chaos.dgdsl.builder.ConditionalRecipeBuilder
+import io.github.chaos.dgdsl.builder.RecipeBuilder
+import io.github.chaos.dgdsl.builder.TranslationBuilder
+import io.github.chaos.dgdsl.builder.loot.LootTableBuilder
 import io.github.chaos.dgdsl.builder.nbt.CompoundBuilder
 import net.minecraft.block.Block
-import net.minecraft.data.ItemModelProvider
 import net.minecraft.data.ShapedRecipeBuilder
 import net.minecraft.enchantment.Enchantment
 import net.minecraft.entity.EntityType
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
-import net.minecraft.loot.LootPool
+import net.minecraft.loot.LootTable
 import net.minecraft.nbt.CompoundNBT
 import net.minecraft.potion.Effect
 import net.minecraft.util.IItemProvider
@@ -21,8 +23,8 @@ fun recipe(result: IItemProvider, resultCount: Int = 1, builder: RecipeBuilder.(
 fun conditionalRecipe(builder: ConditionalRecipeBuilder.() -> Unit): ConditionalRecipeBuilder =
     ConditionalRecipeBuilder().apply(builder)
 
-fun lootPool(builder: LootPoolBuilder.() -> Unit): LootPool.Builder =
-    LootPoolBuilder(LootPool.lootPool()).apply(builder).raw()
+fun lootTable(builder: LootTableBuilder.() -> Unit): LootTable.Builder =
+    LootTableBuilder(LootTable.lootTable()).apply(builder).build()
 
 fun LanguageProvider.add(builder: TranslationBuilder.() -> Unit) =
     TranslationBuilder().apply(builder).build().forEach { (k, v) ->

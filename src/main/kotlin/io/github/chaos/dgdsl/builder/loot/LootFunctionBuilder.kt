@@ -1,10 +1,7 @@
 package io.github.chaos.dgdsl.builder.loot
 
-import io.github.chaos.dgdsl.ItemLootEntryBuilder
-import io.github.chaos.dgdsl.TableLootEntryBuilder
-import io.github.chaos.dgdsl.TagLootEntryBuilder
+import io.github.chaos.dgdsl.*
 import io.github.chaos.dgdsl.builder.AbstractBuilder
-import io.github.chaos.dgdsl.builder.BuilderEntryMarker
 import io.github.chaos.dgdsl.builder.utils.ICommonLootEntryArgFunctions
 import io.github.chaos.dgdsl.builder.utils.IListInfixFunctions
 import net.minecraft.block.Block
@@ -18,18 +15,17 @@ import net.minecraft.potion.Effect
 import net.minecraft.tags.ITag
 import net.minecraft.util.IItemProvider
 import net.minecraft.util.ResourceLocation
-import net.minecraft.util.text.ITextComponent
 import net.minecraft.world.gen.feature.structure.Structure
 import net.minecraft.world.storage.MapDecoration
 
 class LootFunctionBuilder : AbstractBuilder(), IListInfixFunctions {
     private val functions = mutableListOf<ILootFunction.IBuilder>()
 
-    open class LootFunctionCollector : AbstractBuilder() {
+    abstract class LootFunctionCollector : AbstractBuilder() {
         private val conditions = mutableListOf<ILootCondition>()
 
-        fun condition() {
-
+        fun condition(builder: LootConditionBuilder.() -> Unit) {
+            conditions.addAll(LootConditionBuilder().apply(builder).build().map(ILootCondition.IBuilder::build))
         }
     }
 
@@ -75,7 +71,7 @@ class LootFunctionBuilder : AbstractBuilder(), IListInfixFunctions {
         functions add EnchantmentCollector().apply(collector).collect().apply(builder)
     }
 
-    inner class EnchantmentCollector : IListInfixFunctions {
+    inner class EnchantmentCollector : LootFunctionCollector(), IListInfixFunctions {
         private val builder = EnchantRandomly.Builder()
         private val enchantments = mutableListOf<Enchantment>()
 
@@ -111,26 +107,32 @@ class LootFunctionBuilder : AbstractBuilder(), IListInfixFunctions {
     fun explorationMap(explorationMap: ExplorationMapCollector.() -> Unit) =
         functions add ExplorationMapCollector().apply(explorationMap).collect()
 
-    inner class ExplorationMapCollector {
+    inner class ExplorationMapCollector : LootFunctionCollector() {
         private val builder: ExplorationMap.Builder = ExplorationMap.makeExplorationMap()
 
-        fun destination(destination: () -> Structure<*>) =
+        fun destination(destination: () -> Structure<*>) {
             builder.setDestination(destination.invoke())
+        }
 
-        fun decoration(decoration: MapDecoration.Type) =
+        fun decoration(decoration: MapDecoration.Type) {
             builder.setMapDecoration(decoration)
+        }
 
-        fun zoom(zoom: Byte) =
+        fun zoom(zoom: Byte) {
             builder.setZoom(zoom)
+        }
 
-        fun zoom(zoom: () -> Byte) =
+        fun zoom(zoom: () -> Byte) {
             zoom(zoom.invoke())
+        }
 
-        fun skipExistingChunk(skip: Boolean) =
+        fun skipExistingChunk(skip: Boolean) {
             builder.setSkipKnownStructures(skip)
+        }
 
-        fun skipExistingChunk(skip: () -> Boolean) =
+        fun skipExistingChunk(skip: () -> Boolean) {
             skipExistingChunk(skip.invoke())
+        }
 
         fun collect() =
             builder
@@ -163,7 +165,7 @@ class LootFunctionBuilder : AbstractBuilder(), IListInfixFunctions {
             IntClamper.upperBound(max)
         } else if (min != null && max != null) {
             IntClamper.clamp(min, max)
-        } else throw IllegalArgumentException("IntClamper requires at least on value.")
+        } else throw IllegalArgumentException("IntClamper requires at least one value.")
 
         functions add LimitCount.limitCount(clamper).apply(builder)
     }
@@ -186,21 +188,31 @@ class LootFunctionBuilder : AbstractBuilder(), IListInfixFunctions {
     fun content(lootEntries: ContentCollector.() -> Unit) =
         functions add ContentCollector().apply(lootEntries).collect()
 
-    inner class ContentCollector : LootFunctionCollector(), IListInfixFunctions {
+    inner class ContentCollector : LootFunctionCollector(), ILootEntryBuilder, IListInfixFunctions {
         private val builder = SetContents.setContents()
         private val entries = mutableListOf<LootEntry.Builder<*>>()
 
-        fun itemLoot(item: IItemProvider, builder: ItemLootEntryBuilder.() -> Unit = {}) =
-            entries add ItemLootEntryBuilder(item).apply(builder).build()
+        private fun add(builder: LootEntry.Builder<*>) {
+            entries += builder
+        }
 
-        fun tagLoot(tag: ITag<Item>, builder: TagLootEntryBuilder.() -> Unit = {}) =
-            entries add TagLootEntryBuilder(tag).apply(builder).build()
+        override fun itemLoot(item: IItemProvider, builder: ItemLootEntryBuilder.() -> Unit) =
+            add(ItemLootEntryBuilder(item).apply(builder).build())
 
-        fun tableLoot(reference: ResourceLocation, builder: TableLootEntryBuilder.() -> Unit = {}) =
-            entries add TableLootEntryBuilder(reference).apply(builder).build()
+        override fun tagLoot(tag: ITag<Item>, builder: TagLootEntryBuilder.() -> Unit) =
+            add(TagLootEntryBuilder(tag).apply(builder).build())
 
-        fun alternativesLoot(builder: LootEntryBuilder.AlternativesEntryBuilder.() -> Unit = {}) =
-            entries add LootEntryBuilder.AlternativesEntryBuilder().apply(builder).build()
+        override fun tableLoot(reference: ResourceLocation, builder: TableLootEntryBuilder.() -> Unit) =
+            add(TableLootEntryBuilder(reference).apply(builder).build())
+
+        override fun alternativesLoot(builder: LootEntryBuilder.AlternativesLootEntryBuilder.() -> Unit) =
+            add(LootEntryBuilder.AlternativesLootEntryBuilder().apply(builder).build())
+
+        override fun dynamicLoot(reference: ResourceLocation, builder: DynamicLootEntryBuilder.() -> Unit) =
+            add(DynamicLootEntryBuilder(reference).apply(builder).build())
+
+        override fun emptyLoot(builder: EmptyLootEntryBuilder.() -> Unit) =
+            add(EmptyLootEntryBuilder().apply(builder).build())
 
         fun collect() =
             builder.apply { entries.forEach(::withEntry) }

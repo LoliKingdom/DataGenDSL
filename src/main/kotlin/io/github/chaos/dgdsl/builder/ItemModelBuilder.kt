@@ -3,6 +3,6 @@ package io.github.chaos.dgdsl.builder
 /**
  *  Incomplete Class
  */
-@BuilderEntryMarker
+@DataGenDslMarker
 internal class ItemModelBuilder {
 }

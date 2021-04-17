@@ -1,5 +1,5 @@
 package io.github.chaos.dgdsl.builder
 
-@BuilderEntryMarker
+@DataGenDslMarker
 abstract class AbstractBuilder {
 }

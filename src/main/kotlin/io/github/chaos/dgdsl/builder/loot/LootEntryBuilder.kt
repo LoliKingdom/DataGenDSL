@@ -1,10 +1,7 @@
 package io.github.chaos.dgdsl.builder.loot
 
-import io.github.chaos.dgdsl.ItemLootEntryBuilder
-import io.github.chaos.dgdsl.TableLootEntryBuilder
-import io.github.chaos.dgdsl.TagLootEntryBuilder
+import io.github.chaos.dgdsl.*
 import io.github.chaos.dgdsl.builder.AbstractBuilder
-import io.github.chaos.dgdsl.builder.utils.IListInfixFunctions
 import net.minecraft.item.Item
 import net.minecraft.loot.*
 import net.minecraft.loot.conditions.ILootCondition
@@ -12,10 +9,10 @@ import net.minecraft.tags.ITag
 import net.minecraft.util.IItemProvider
 import net.minecraft.util.ResourceLocation
 
-abstract class LootEntryBuilder :
-    AbstractBuilder() {
-
+abstract class LootEntryBuilder : AbstractBuilder() {
     abstract fun condition(conditions: LootConditionBuilder.() -> Unit)
+
+    abstract fun unwrap(): LootEntry.Builder<*>
 
     abstract fun build(): LootEntry.Builder<*>
 
@@ -24,8 +21,19 @@ abstract class LootEntryBuilder :
         fun function(functions: LootFunctionBuilder.() -> Unit) =
             LootFunctionBuilder().apply(functions).build().forEach(builder::apply)
 
+        fun weight(weight: Int) {
+            builder.setWeight(weight)
+        }
+
+        fun quality(quality: Int) {
+            builder.setQuality(quality)
+        }
+
         override fun condition(conditions: LootConditionBuilder.() -> Unit) =
             LootConditionBuilder().apply(conditions).build().forEach(builder::`when`)
+
+        override fun unwrap(): LootEntry.Builder<*> =
+            builder.unwrap()
 
         override fun build(): LootEntry.Builder<*> =
             builder
@@ -38,27 +46,48 @@ abstract class LootEntryBuilder :
 
         class TableLootEntryBuilder(reference: ResourceLocation) :
             StandaloneLootEntryBuilder(TableLootEntry.lootTableReference(reference))
+
+        class DynamicLootEntryBuilder(reference: ResourceLocation) :
+            StandaloneLootEntryBuilder(DynamicLootEntry.dynamicEntry(reference))
+
+        class EmptyLootEntryBuilder :
+            StandaloneLootEntryBuilder(EmptyLootEntry.emptyItem())
     }
 
-    class AlternativesEntryBuilder : LootEntryBuilder(), IListInfixFunctions {
+    class AlternativesLootEntryBuilder : LootEntryBuilder(), ILootEntryBuilder {
         private val conditions = mutableListOf<ILootCondition.IBuilder>()
         private val entries = mutableListOf<LootEntry.Builder<*>>()
 
-        fun itemLoot(item: IItemProvider, builder: ItemLootEntryBuilder.() -> Unit = {}) =
-            entries add ItemLootEntryBuilder(item).apply(builder).build()
+        private fun add(builder: LootEntry.Builder<*>) {
+            entries += builder
+        }
 
-        fun tagLoot(tag: ITag<Item>, builder: TagLootEntryBuilder.() -> Unit = {}) =
-            entries add TagLootEntryBuilder(tag).apply(builder).build()
+        override fun itemLoot(item: IItemProvider, builder: ItemLootEntryBuilder.() -> Unit) =
+            add(ItemLootEntryBuilder(item).apply(builder).build())
 
-        fun tableLoot(reference: ResourceLocation, builder: TableLootEntryBuilder.() -> Unit = {}) =
-            entries add TableLootEntryBuilder(reference).apply(builder).build()
+        override fun tagLoot(tag: ITag<Item>, builder: TagLootEntryBuilder.() -> Unit) =
+            add(TagLootEntryBuilder(tag).apply(builder).build())
 
-        fun alternativesLoot(builder: AlternativesEntryBuilder.() -> Unit = {}) =
-            entries add AlternativesEntryBuilder().apply(builder).build()
+        override fun tableLoot(reference: ResourceLocation, builder: TableLootEntryBuilder.() -> Unit) =
+            add(TableLootEntryBuilder(reference).apply(builder).build())
+
+        override fun alternativesLoot(builder: AlternativesLootEntryBuilder.() -> Unit) =
+            add(AlternativesLootEntryBuilder().apply(builder).build())
+
+        override fun dynamicLoot(reference: ResourceLocation, builder: DynamicLootEntryBuilder.() -> Unit) =
+            add(DynamicLootEntryBuilder(reference).apply(builder).build())
+
+        override fun emptyLoot(builder: EmptyLootEntryBuilder.() -> Unit) =
+            add(EmptyLootEntryBuilder().apply(builder).build())
 
         override fun condition(conditions: LootConditionBuilder.() -> Unit) {
-            this.conditions addAll LootConditionBuilder().apply(conditions).build()
+            this.conditions += LootConditionBuilder().apply(conditions).build()
         }
+
+        override fun unwrap(): LootEntry.Builder<*> =
+            AlternativesLootEntry.alternatives(*entries.toMutableList().toTypedArray()).apply {
+                conditions.forEach(::`when`)
+            }
 
         override fun build(): LootEntry.Builder<*> =
             AlternativesLootEntry.alternatives(*entries.toTypedArray()).apply {
