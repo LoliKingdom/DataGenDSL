@@ -10,6 +10,7 @@ import net.minecraft.data.IDataProvider
 import net.minecraft.data.LootTableProvider
 import net.minecraft.item.Items
 import net.minecraft.loot.LootParameterSets
+import net.minecraft.loot.LootParameters
 import net.minecraft.loot.LootTable
 import net.minecraft.loot.LootTableManager
 import net.minecraft.loot.functions.CopyName
@@ -36,6 +37,10 @@ abstract class BaseLoot(private val dataGenerator: DataGenerator) : LootTablePro
 
     protected fun createStandardTables(name: String, block: Block): LootTable.Builder =
         lootTable {
+            parameterSet {
+                optional(LootParameters.BLOCK_ENTITY, LootParameters.KILLER_ENTITY)
+                required(LootParameters.BLOCK_STATE, LootParameters.DAMAGE_SOURCE)
+            }
             pool(name = name) {
                 itemLoot(block) {
                     function {

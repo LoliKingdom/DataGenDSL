@@ -17,7 +17,7 @@ object NBTTest {
                     }
                 }
             }
-
+            int("integerOfCourse", 1)
         }
 
         println(nbt)
