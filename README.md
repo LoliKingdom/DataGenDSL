@@ -29,7 +29,7 @@ TODO
 * [Advancement](#advancement)
 * [Condition](#condition)
 
-    </td><td width=33% valign=top>
+</td><td width=33% valign=top>
 
 * [Loot Table](#loot-table)
 * [Loot Pool](#loot-pool)
@@ -38,12 +38,11 @@ TODO
 * [Loot Conditions](#loot-conditions)
 * [NBT](#nbt)
 
-    </td><td width=33% valign=top>
+</td><td valign=top>
 
 * [Lang](#lang)
 
-    </td></tr>
-
+</td></tr>
 </table>
 
 ## Usages
