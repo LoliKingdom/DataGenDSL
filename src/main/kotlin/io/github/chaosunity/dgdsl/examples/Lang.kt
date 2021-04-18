@@ -1,7 +1,7 @@
 package io.github.chaosunity.dgdsl.examples
 
 import io.github.chaosunity.dgdsl.DataGeneratorDSL.MODID
-import io.github.chaosunity.dgdsl.add
+import io.github.chaosunity.dgdsl.lang
 import net.minecraft.block.Blocks
 import net.minecraft.data.DataGenerator
 import net.minecraft.enchantment.Enchantments
@@ -12,7 +12,7 @@ import net.minecraftforge.common.data.LanguageProvider
 
 class Lang(gen: DataGenerator) : LanguageProvider(gen, MODID, "en_us") {
     override fun addTranslations() {
-        add {
+        lang {
             Blocks.STONE to "Stone"
             Items.DIAMOND to "Diamond"
             Effects.POISON to "Poison"

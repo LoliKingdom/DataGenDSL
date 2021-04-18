@@ -365,7 +365,7 @@ nbt { // this top-level-function creates a nbt compound
 ```kotlin
 // ... We take LanguageProvider's function `addTranslations` as example
 override fun addTranslations() {
-    add {
+    lang {
         Blocks.STONE to "Stone"
         Items.DIAMOND to "Diamond"
         Effects.POISON to "Poison"

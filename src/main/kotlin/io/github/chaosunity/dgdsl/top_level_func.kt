@@ -26,7 +26,7 @@ fun conditionalRecipe(builder: ConditionalRecipeBuilder.() -> Unit): Conditional
 fun lootTable(builder: LootTableBuilder.() -> Unit): LootTable.Builder =
     LootTableBuilder(LootTable.lootTable()).apply(builder).build()
 
-fun LanguageProvider.add(builder: TranslationBuilder.() -> Unit) =
+fun LanguageProvider.lang(builder: TranslationBuilder.() -> Unit) =
     TranslationBuilder().apply(builder).build().forEach { (k, v) ->
         when (k) {
             is Block -> add(k, v)
