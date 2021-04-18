@@ -181,9 +181,9 @@ advancement {
      * You must provide either parentID or parent
      */
 
-    display {
+    display(
         // Construct your AdvancementBuilder.DisplayInfo here
-    }
+    )
 }
 // ...
 ```

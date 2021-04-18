@@ -2,10 +2,7 @@ package io.github.chaosunity.dgdsl.builder
 
 import com.google.gson.JsonObject
 import io.github.chaosunity.dgdsl.pairToID
-import net.minecraft.advancements.Advancement
-import net.minecraft.advancements.Criterion
-import net.minecraft.advancements.FrameType
-import net.minecraft.advancements.IRequirementsStrategy
+import net.minecraft.advancements.*
 import net.minecraft.item.ItemStack
 import net.minecraft.network.PacketBuffer
 import net.minecraft.util.IItemProvider
@@ -13,7 +10,8 @@ import net.minecraft.util.ResourceLocation
 import net.minecraft.util.text.ITextComponent
 import java.util.function.Consumer
 
-class AdvancementBuilder(private val builder: Advancement.Builder = Advancement.Builder.advancement()) : AbstractBuilder() {
+class AdvancementBuilder(private val builder: Advancement.Builder = Advancement.Builder.advancement()) :
+    AbstractBuilder() {
     lateinit var parentIdentifier: ResourceLocation
     lateinit var parentAdvancement: Advancement
 
@@ -31,12 +29,52 @@ class AdvancementBuilder(private val builder: Advancement.Builder = Advancement.
         parentID(pairToID(id.invoke()))
     }
 
-    fun display(info: DisplayInfo) {
-        builder.display(info.build())
+    fun display(
+        item: IItemProvider,
+        title: ITextComponent,
+        description: ITextComponent,
+        background: ResourceLocation?,
+        frameType: FrameType,
+        showToast: Boolean,
+        announceToChat: Boolean,
+        hidden: Boolean
+    ) {
+        builder.display(
+            DisplayInfo(
+                ItemStack(item),
+                title,
+                description,
+                background,
+                frameType,
+                showToast,
+                announceToChat,
+                hidden
+            )
+        )
     }
 
-    fun display(info: () -> DisplayInfo) {
-        builder.display(info.invoke().build())
+    fun display(
+        stack: ItemStack,
+        title: ITextComponent,
+        description: ITextComponent,
+        background: ResourceLocation?,
+        frameType: FrameType,
+        showToast: Boolean,
+        announceToChat: Boolean,
+        hidden: Boolean
+    ) {
+        builder.display(
+            DisplayInfo(
+                stack,
+                title,
+                description,
+                background,
+                frameType,
+                showToast,
+                announceToChat,
+                hidden
+            )
+        )
     }
 
     fun reward(reward: AdvancementRewardBuilder.() -> Unit) {
@@ -100,47 +138,4 @@ class AdvancementBuilder(private val builder: Advancement.Builder = Advancement.
 
     override fun toString(): String =
         builder.toString()
-
-    data class DisplayInfo(
-        private val stack: ItemStack,
-        private val title: ITextComponent,
-        private val description: ITextComponent,
-        private val background: ResourceLocation?,
-        private val frameType: FrameType,
-        private val showToast: Boolean,
-        private val announceToChat: Boolean,
-        private val hidden: Boolean
-    ) {
-        constructor(
-            item: IItemProvider,
-            title: ITextComponent,
-            description: ITextComponent,
-            background: ResourceLocation?,
-            frameType: FrameType,
-            showToast: Boolean,
-            announceToChat: Boolean,
-            hidden: Boolean
-        ) : this(
-            ItemStack(item.asItem()),
-            title,
-            description,
-            background,
-            frameType,
-            showToast,
-            announceToChat,
-            hidden
-        )
-
-        fun build(): net.minecraft.advancements.DisplayInfo =
-            net.minecraft.advancements.DisplayInfo(
-                stack,
-                title,
-                description,
-                background,
-                frameType,
-                showToast,
-                announceToChat,
-                hidden
-            )
-    }
 }

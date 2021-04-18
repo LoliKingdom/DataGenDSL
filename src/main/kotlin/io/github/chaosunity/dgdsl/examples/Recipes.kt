@@ -19,10 +19,10 @@ class Recipes(generatorIn: DataGenerator) : RecipeProvider(generatorIn) {
             condition {
                 and {
                     not(modLoaded("minecraft")) +
-                    itemExists {
-                          "minecraft" to "dirt"
-                    } +
-                    False
+                            itemExists {
+                                "minecraft" to "dirt"
+                            } +
+                            False
                 }
             }
 
@@ -52,10 +52,10 @@ class Recipes(generatorIn: DataGenerator) : RecipeProvider(generatorIn) {
                 condition {
                     and {
                         not(modLoaded("minecraft")) +
-                        itemExists {
-                              "minecraft" to "dirt"
-                        } +
-                        False
+                                itemExists {
+                                    "minecraft" to "dirt"
+                                } +
+                                False
                     }
                 }
 
@@ -64,18 +64,16 @@ class Recipes(generatorIn: DataGenerator) : RecipeProvider(generatorIn) {
                         "minecraft" to "root"
                     }
 
-                    display {
-                        AdvancementBuilder.DisplayInfo(
-                            Blocks.DIAMOND_BLOCK,
-                            StringTextComponent("Dirt2Diamonds"),
-                            StringTextComponent("The BEST crafting recipe in the game!"),
-                            null,
-                            FrameType.TASK,
-                            false,
-                            false,
-                            false
-                        )
-                    }
+                    display(
+                        Blocks.DIAMOND_BLOCK,
+                        StringTextComponent("Dirt2Diamonds"),
+                        StringTextComponent("The BEST crafting recipe in the game!"),
+                        null,
+                        FrameType.TASK,
+                        false,
+                        false,
+                        false
+                    )
                 }
             }
         }.build(consumer, ID)
@@ -84,10 +82,10 @@ class Recipes(generatorIn: DataGenerator) : RecipeProvider(generatorIn) {
             condition {
                 and {
                     not(modLoaded("minecraft")) +
-                    itemExists {
-                          "minecraft" to "dirt"
-                    } +
-                    False
+                            itemExists {
+                                "minecraft" to "dirt"
+                            } +
+                            False
                 }
             }
 
