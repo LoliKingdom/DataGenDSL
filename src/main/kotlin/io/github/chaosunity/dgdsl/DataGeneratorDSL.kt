@@ -1,9 +1,6 @@
 package io.github.chaosunity.dgdsl
 
-import io.github.chaosunity.dgdsl.examples.Lang
-import io.github.chaosunity.dgdsl.examples.LootTable
-import io.github.chaosunity.dgdsl.examples.NBTTest
-import io.github.chaosunity.dgdsl.examples.Recipes
+import io.github.chaosunity.dgdsl.examples.*
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent
@@ -35,5 +32,11 @@ object DataGeneratorDSL {
         generator.addProvider(Lang(generator))
 
         generator.addProvider(LootTable(generator))
+
+        val blockTagProvider = BlockTag(generator, event.existingFileHelper)
+
+        generator.addProvider(blockTagProvider)
+
+        generator.addProvider(ItemTag(generator, blockTagProvider, event.existingFileHelper))
     }
 }

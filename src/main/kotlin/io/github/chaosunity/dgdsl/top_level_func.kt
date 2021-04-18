@@ -5,7 +5,11 @@ import io.github.chaosunity.dgdsl.builder.RecipeBuilder
 import io.github.chaosunity.dgdsl.builder.TranslationBuilder
 import io.github.chaosunity.dgdsl.builder.loot.LootTableBuilder
 import io.github.chaosunity.dgdsl.builder.nbt.CompoundBuilder
+import io.github.chaosunity.dgdsl.builder.tag.BlockTagBuilder
+import io.github.chaosunity.dgdsl.builder.tag.ItemTagBuilder
 import net.minecraft.block.Block
+import net.minecraft.data.BlockTagsProvider
+import net.minecraft.data.ItemTagsProvider
 import net.minecraft.data.ShapedRecipeBuilder
 import net.minecraft.enchantment.Enchantment
 import net.minecraft.entity.EntityType
@@ -38,6 +42,12 @@ fun LanguageProvider.lang(builder: TranslationBuilder.() -> Unit) =
             is String -> add(k, v)
         }
     }
+
+fun ItemTagsProvider.tag(builder: ItemTagBuilder.() -> Unit) =
+    ItemTagBuilder(this).apply(builder)
+
+fun BlockTagsProvider.tag(builder: BlockTagBuilder.() -> Unit) =
+    BlockTagBuilder(this).apply(builder)
 
 fun nbt(builder: CompoundBuilder.() -> Unit): CompoundNBT =
     CompoundBuilder().apply(builder).build()
