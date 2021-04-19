@@ -18,25 +18,29 @@ A DSL for data generator, makes your life better.
 Groovy gradle:
 ```groovy
 repositories {
-    maven { url 'https://jitpack.io' }
+    maven { url url 'https://www.cursemaven.com' }
 }
 
 dependencies {
-    implementation fg.deobf('com.github.LoliKingdom:DataGenDSL:master-SNAPSHOT')
+    implementation fg.deobf('curse.maven:data-generator-dsl-473005:FILE_ID')
 }
 ```
 
 Kotlin gradle: 
 ```kotlin
 repositories {
-    maven(url = "https://jitpack.io")
+    maven(url = 'https://www.cursemaven.com')
 }
 
 dependencies {
     implementation(project.the<DependencyManagementExtension>()
-        .deobf(project.dependencies.create('com.github.LoliKingdom:DataGenDSL:master-SNAPSHOT')))
+        .deobf(project.dependencies.create('curse.maven:data-generator-dsl-473005:FILE_ID')))
 }
 ```
+| Versions | File ID |
+|----------|---------|
+|1.0.0     |3279767  |
+
 ## Table of Contents
 
 <table>
