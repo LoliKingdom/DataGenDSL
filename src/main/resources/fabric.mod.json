@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "dgdsl",
+  "version": "${version}",
+  "name": "DataGen Fabric",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "MPL-2.0",
+  "environment": "*",
+  "accessWidener": "dgdsl.accesswidener",
+  "entrypoints": {
+    "main": [
+      {
+        "adapter": "kotlin",
+        "value": "io.github.chaosunity.dgdsl.DataGenDSL"
+      }
+    ]
+  },
+  "mixins": [
+    "DataGen-Fabric.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.11.6",
+    "minecraft": "1.17",
+    "fabric-language-kotlin": ">=1.6.2+kotlin.1.5.20"
+  }
+}
